@@ -10,7 +10,7 @@ runtime so services only contain domain code. Auto-discovered via `KitServicePro
 | `shopwise:consume <topics...>` + `MessageDispatcher` + `processed_messages` | idempotent consumers; handlers mapped in the service's `config/messaging.php` |
 | `Messaging\MessageHandler` | interface for event handlers |
 | `Messaging\Tracing` | W3C trace context over Kafka headers |
-| `Auth\VerifyJwt` (alias `auth.jwt`, `auth.jwt:<role>`) + `Auth\JwtUser` | JWT from identity, verified via JWKS; `$request->user()` |
+| `Auth\VerifyJwt` (alias `auth.jwt`, `auth.jwt:<role>`) + `Auth\JwtUser` | JWT from identity, verified with keys from `Auth\KeySource` (default `Jwks` over HTTP; identity binds its own); `$request->user()` |
 | `Money\MoneyCast` | `<x>_amount` + `<x>_currency` columns ↔ `Brick\Money\Money` |
 | `Testing\FakePublisher` | assert published messages in service tests |
 
