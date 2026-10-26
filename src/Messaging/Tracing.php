@@ -41,7 +41,8 @@ final class Tracing
     public static function consume(Envelope $envelope, string $topic, array $headers, Closure $work): mixed
     {
         $parent = TraceContextPropagator::getInstance()->extract($headers);
-        $span = Globals::tracerProvider()->getTracer('shopwise-kit')
+        $provider = Globals::tracerProvider();
+        $span = $provider->getTracer('shopwise-kit')
             ->spanBuilder("{$topic} process")
             ->setParent($parent)
             ->setSpanKind(SpanKind::KIND_CONSUMER)
@@ -62,6 +63,11 @@ final class Tracing
         } finally {
             $scope->detach();
             $span->end();
+            // Consumers are long-running and often idle; the batch processor only exports when another
+            // span ends, so flush per message or the trace stays incomplete until the next one.
+            if (method_exists($provider, 'forceFlush')) {
+                $provider->forceFlush();
+            }
         }
     }
 }
