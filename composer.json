@@ -1,0 +1,56 @@
+{
+    "name": "shopwise/laravel-kit",
+    "description": "Shared runtime for Shopwise Laravel services: transactional outbox, idempotent Kafka consumers, JWT auth, money casts, tracing.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "brick/money": "^0.15.2",
+        "firebase/php-jwt": "^7.2.1",
+        "illuminate/support": "^13.0",
+        "mateusjunges/laravel-kafka": "^2.13.1",
+        "open-telemetry/api": "^1.10.1"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.13.2",
+        "laravel/pint": "^1.32.1",
+        "orchestra/testbench": "^11.3",
+        "pestphp/pest": "^5.3",
+        "pestphp/pest-plugin-laravel": "^5.0.1",
+        "rector/rector": "^2.8.1",
+        "driftingly/rector-laravel": "^2.7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shopwise\\Kit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Shopwise\\Kit\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Shopwise\\Kit\\KitServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "check": [
+            "pint --test",
+            "rector --dry-run",
+            "phpstan analyse --no-progress --memory-limit=1G",
+            "pest --parallel"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
