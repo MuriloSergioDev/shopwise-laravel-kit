@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shopwise\Kit\Tests;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Junges\Kafka\Providers\LaravelKafkaServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Shopwise\Kit\KitServiceProvider;
 use Shopwise\Kit\Messaging\Publisher;
@@ -27,7 +28,7 @@ abstract class TestCase extends Orchestra
 
     protected function getPackageProviders($app): array
     {
-        return [KitServiceProvider::class];
+        return [LaravelKafkaServiceProvider::class, KitServiceProvider::class];
     }
 
     protected function defineEnvironment($app): void

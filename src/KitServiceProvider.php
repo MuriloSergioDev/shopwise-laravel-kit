@@ -19,6 +19,7 @@ final class KitServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/messaging.php', 'messaging');
         $this->mergeConfigFrom(__DIR__.'/../config/shopwise-auth.php', 'shopwise-auth');
+        $this->mergeConfigFrom(__DIR__.'/../config/kafka.php', 'kafka');
 
         $this->app->bindIf(Publisher::class, KafkaPublisher::class);
     }
