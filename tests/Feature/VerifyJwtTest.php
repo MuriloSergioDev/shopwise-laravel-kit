@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Shopwise\Kit\Auth\KeySource;
 
 beforeEach(function (): void {
     $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
@@ -39,6 +41,22 @@ it('rejects missing, expired, foreign-issuer and garbage tokens', function (?str
     'expired' => fn () => ($this->token)(['exp' => time() - 3600]),
     'foreign issuer' => fn () => ($this->token)(['iss' => 'someone-else']),
 ]);
+
+it('verifies against a bound KeySource without fetching JWKS', function (): void {
+    $public = openssl_pkey_get_details(openssl_pkey_get_private($this->privateKey))['key'];
+    $this->app->instance(KeySource::class, new readonly class($public) implements KeySource
+    {
+        public function __construct(private string $public) {}
+
+        public function keys(bool $refresh = false): array
+        {
+            return ['k1' => new Key($this->public, 'RS256')];
+        }
+    });
+
+    $this->getJson('/me', ['Authorization' => 'Bearer '.($this->token)()])->assertOk();
+    Http::assertNothingSent();
+});
 
 it('enforces required roles', function (): void {
     $this->getJson('/admin', ['Authorization' => 'Bearer '.($this->token)()])->assertForbidden();

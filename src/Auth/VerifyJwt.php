@@ -16,7 +16,7 @@ use Throwable;
  */
 final readonly class VerifyJwt
 {
-    public function __construct(private Jwks $jwks) {}
+    public function __construct(private KeySource $keys) {}
 
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
@@ -53,7 +53,7 @@ final readonly class VerifyJwt
         JWT::$leeway = config()->integer('shopwise-auth.leeway_seconds', 30);
 
         try {
-            return JWT::decode($token, $this->jwks->keys());
+            return JWT::decode($token, $this->keys->keys());
         } catch (\UnexpectedValueException $e) {
             // Unknown "kid" usually means identity rotated its keys: refresh once.
             if (! str_contains($e->getMessage(), 'kid')) {
@@ -64,7 +64,7 @@ final readonly class VerifyJwt
         }
 
         try {
-            return JWT::decode($token, $this->jwks->keys(refresh: true));
+            return JWT::decode($token, $this->keys->keys(refresh: true));
         } catch (Throwable) {
             abort(401, 'Invalid token.');
         }

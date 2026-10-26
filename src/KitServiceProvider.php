@@ -7,6 +7,8 @@ namespace Shopwise\Kit;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use Shopwise\Kit\Auth\Jwks;
+use Shopwise\Kit\Auth\KeySource;
 use Shopwise\Kit\Auth\VerifyJwt;
 use Shopwise\Kit\Console\ConsumeCommand;
 use Shopwise\Kit\Console\RelayOutboxCommand;
@@ -22,6 +24,7 @@ final class KitServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/kafka.php', 'kafka');
 
         $this->app->bindIf(Publisher::class, KafkaPublisher::class);
+        $this->app->bindIf(KeySource::class, Jwks::class);
     }
 
     public function boot(Router $router): void

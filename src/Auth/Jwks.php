@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 /**
  * Public keys of the identity service, fetched from its JWKS endpoint and cached.
  */
-final class Jwks
+final class Jwks implements KeySource
 {
     /**
      * @return array<string, Key>
